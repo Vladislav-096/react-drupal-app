@@ -1,0 +1,60 @@
+<?php
+
+function books_schema()
+{
+  $schema['books'] = [
+    'description' => 'Books table',
+    'fields' => [
+      'id' => [
+        'description' => 'The primary identifier for the book.', // For developers right here. It won't appear anywhere else
+        'type' => 'serial',
+        // small: from -32,768 to 32,767 (unsigned: 0–65535)
+        'size' => 'small', // tiny / small / medium / normal / big
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => 'The {user}.uid that added this book',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'name' => [
+        'description' => 'Name of a book',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'created' => [
+        'description' => 'Timestamp for when book was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Добавляет колонки 'author' в таблицу books.
+ * /update.php вот так сделать надо
+ */
+function books_update_8001()
+{
+  $schema = \Drupal::database()->schema();
+
+  // Добавление колонки author.
+  if (!$schema->fieldExists('books', 'author')) {
+    $schema->addField('books', 'author', [
+      'description' => 'Author of a book',
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => FALSE,
+      'default' => NULL,
+    ]);
+  }
+}

@@ -1,0 +1,39 @@
+auth.register:
+  path: "/api/register"
+  defaults:
+    _controller: '\Drupal\auth\Controller\AuthController::register'
+    _format: "json"
+  requirements:
+    _permission: "access content"
+
+auth.login:
+  path: "/api/login"
+  defaults:
+    _controller: '\Drupal\auth\Controller\AuthController::login'
+    _format: "json"
+  requirements:
+    _permission: "access content"
+
+auth.logout:
+  path: "/api/logout"
+  defaults:
+    _controller: '\Drupal\auth\Controller\AuthController::logout'
+    _format: "json"
+  requirements:
+    _permission: "access content"
+
+auth.refresh_access_token:
+  path: "/api/refresh-access-token"
+  defaults:
+    _controller: '\Drupal\auth\Controller\AuthController::refreshAccessToken'
+    _format: "json"
+  requirements:
+    _permission: "access content"
+
+auth.get_user:
+  path: "/api/get-user"
+  defaults:
+    _controller: '\Drupal\auth\Controller\AuthController::getUser'
+    _format: "json"
+  requirements:
+    _permission: "access content"

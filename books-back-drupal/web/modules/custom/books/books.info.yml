@@ -1,0 +1,5 @@
+name: 'Books module'
+type: module
+core_version_requirement: ^11
+description: 'Module for books'
+package: 'Books module'

@@ -1,0 +1,5 @@
+name: 'Auth module'
+type: module
+core_version_requirement: ^11
+description: 'Auth module descr'
+package: 'Auth module'

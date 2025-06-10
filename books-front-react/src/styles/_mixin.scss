@@ -1,0 +1,22 @@
+@use "./_variables.scss" as *;
+
+@mixin input() {
+  position: relative;
+  width: inherit;
+  padding: 9px;
+  height: 40px;
+  //   color: $primaryColor;
+  //   background-color: $inputBackgroundDefault;
+  border-radius: 5px;
+  //   border: 1px solid $inputBorder;
+
+  &:focus {
+    outline: none;
+    // border: 2px solid $inputFocusBorderColor;
+  }
+
+  &:hover {
+    outline: none;
+    // border: 2px solid $inputHoverBorderColor;
+  }
+}

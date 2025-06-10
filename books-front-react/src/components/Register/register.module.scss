@@ -1,0 +1,10 @@
+@use "../../styles/_mixin.scss" as *;
+
+.form {
+  width: inherit;
+  margin-bottom: 21px;
+
+  .input {
+    @include input();
+  }
+}
