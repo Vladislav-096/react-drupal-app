@@ -8,6 +8,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { FormField } from "../FormField/FormField";
 import styles from "./login.module.scss";
 import { passwordRules, userNameRules } from "../../constants/constants";
+import { AccessTokenContext } from "../../context/AccessTokenContext";
 
 interface FormFileds {
   username: string;
@@ -17,13 +18,12 @@ interface FormFileds {
 export const Login = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext);
-  const [verifyUserLoading, setVerifyUserLoading] = useState<boolean>(false);
+  const { setAccessToken } = useContext(AccessTokenContext);
+  const [isOnSuccessRequestsPending, setIsOnSuccessRequestsPending] =
+    useState<boolean>(false);
   const [loginError, setLoginError] = useState<string>("");
   const [userNameValue, setUserNameValue] = useState<string>("noobAss");
   const [passwordValue, setPasswordValue] = useState<string>("Wasd2112");
-  // const [isUserNameFieldFocused, setIsUserNameFieldFocused] =
-  // useState<boolean>(false);
-  // const [isPasswordFocused, setIsPasswordFocused] = useState<boolean>(false);
 
   const handleUserNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -48,17 +48,22 @@ export const Login = () => {
         setLoginError(error);
       },
 
-      async onSuccess() {
+      async onSuccess(response) {
         try {
-          setVerifyUserLoading(true);
+          setAccessToken(response.access_token);
+          setIsOnSuccessRequestsPending(true);
           const { data } = await getUser();
-          setVerifyUserLoading(false);
+          setIsOnSuccessRequestsPending(false);
           setUser(data);
           resetFormValues();
           navigate("/");
         } catch (e) {
-          setLoginError("Ошибка при верификации пользователя");
+          console.log("also here");
+          setAccessToken(null);
+          setLoginError("Ошибка при верификации пользователя? попробуй позже");
           console.error("verifyUser error", e);
+        } finally {
+          setIsOnSuccessRequestsPending(false);
         }
       },
     },
@@ -134,7 +139,9 @@ export const Login = () => {
         />
       </FormField>
       <button type="submit">
-        {loginMutation.isPending || verifyUserLoading ? "Loading..." : "Log in"}
+        {loginMutation.isPending || isOnSuccessRequestsPending
+          ? "Loading..."
+          : "Log in"}
       </button>
       {loginError && <div>{loginError}</div>}
     </form>

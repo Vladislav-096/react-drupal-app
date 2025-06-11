@@ -1,5 +1,5 @@
 books.data_endpoint:
-  path: "/api/books"
+  path: "/api/get-books"
   defaults:
     _controller: '\Drupal\books\Controller\BooksController::getBooks'
     _format: "json"

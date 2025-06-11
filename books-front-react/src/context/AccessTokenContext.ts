@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-interface AccessTokenContext {
+export interface AccessTokenContext {
   accessToken: string | null;
   setAccessToken: (accessToken: string | null) => void;
 }

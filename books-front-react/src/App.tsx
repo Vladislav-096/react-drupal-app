@@ -14,9 +14,6 @@ interface RequestError {
 }
 
 export const App = () => {
-  // const [unauthorizedHandled, setUnauthorizedHandled] = useState(false); // чтобы не вызывать logout 100 раз
-  // const [refreshTokenLoading, setRefreshTokenLoading] =
-  // useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [error, setError] = useState<RequestError | null>(null);
@@ -38,7 +35,6 @@ export const App = () => {
 
       onError(err) {
         if (err instanceof CustomError) {
-          // console.log("НЫААА: ", err.code);
           const error = { message: err.message, code: err.code };
           setError(error);
         } else {
@@ -46,9 +42,10 @@ export const App = () => {
         }
       },
 
-      async onSuccess(data) {
+      async onSuccess(response) {
         try {
-          console.log("onSuccess arg: ", data);
+          console.log("onSuccess arg: ", response);
+          setAccessToken(response.access_token);
           setIsGetUserLoading(true);
           const userData = await getUser();
           const newUser = {
@@ -56,6 +53,7 @@ export const App = () => {
             email: userData.data.email,
           };
           updateUser(newUser);
+
           setIsGetUserLoading(false);
         } catch (err) {
           if (err instanceof CustomError) {
@@ -71,8 +69,7 @@ export const App = () => {
   );
 
   useEffect(() => {
-    const newAccessToken = refreshTokenMutation.mutate();
-    console.log(newAccessToken);
+    refreshTokenMutation.mutate();
   }, []);
 
   if (refreshTokenMutation.isPending || isGetUserLoading) {

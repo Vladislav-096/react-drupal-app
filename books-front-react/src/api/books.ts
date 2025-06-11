@@ -14,11 +14,13 @@ export type Book = z.infer<typeof bookSchema>;
 const booksSchema = z.array(bookSchema);
 export type Books = z.infer<typeof booksSchema>;
 
-export const getBooks = async () => {
-  return fetch(`${API_URL}/api/books`, {
-    // Токен не живет больше на фронте. Тут Authorization само подставится. Все опирации с токеном и куки происходят на бэке
+export const getBooks = async (accessToken: string) => {
+  return fetch(`${API_URL}api/get-books`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
   })
     .then(validateApiResponse)
     .then((res) => res.json())
@@ -28,7 +30,3 @@ export const getBooks = async () => {
       throw err;
     });
 };
-
-// export const addUserData = async (newUser: ) => {
-
-// }

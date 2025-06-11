@@ -14,7 +14,11 @@ const userSchema = z.object({
   data: userDataSchema,
 });
 
-const refreshToken = z.object({
+const refreshTokenSchema = z.object({
+  access_token: z.string(),
+});
+
+const loginSchema = z.object({
   access_token: z.string(),
 });
 
@@ -38,7 +42,6 @@ export const register = async ({ username, email, password }: Register) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ username, email, password }),
-    // body: new URLSearchParams({ username, email, password }),
   })
     .then(validateResponse)
     .catch((err) => {
@@ -55,9 +58,10 @@ export const login = async ({ username, password }: Login) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ username, password }),
-    // body: new URLSearchParams({ username, password }),
   })
-    .then(validateResponse)
+    .then(validateApiResponse)
+    .then((res) => res.json())
+    .then((data) => loginSchema.parse(data))
     .catch((err) => {
       console.log("login function err", err);
       throw err;
@@ -75,6 +79,7 @@ export const logout = async () => {
     .then(validateResponse)
     .catch((err) => {
       console.log("logout finction err", err);
+      throw err;
     });
 };
 
@@ -85,7 +90,7 @@ export const refreshAccessToken = async () => {
   })
     .then(validateApiResponse)
     .then((res) => res.json())
-    .then((data) => refreshToken.parse(data))
+    .then((data) => refreshTokenSchema.parse(data))
     .catch((err) => {
       console.log("refreshAccessToken function error", err);
       throw err;
@@ -93,7 +98,7 @@ export const refreshAccessToken = async () => {
 };
 
 export const getUser = async () => {
-  return fetch(`${API_URL}/api/verify-token`, {
+  return fetch(`${API_URL}api/get-user`, {
     method: "GET",
     credentials: "include",
   })

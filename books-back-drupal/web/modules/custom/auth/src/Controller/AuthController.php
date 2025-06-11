@@ -18,7 +18,6 @@ class AuthController extends ControllerBase
 
   // private $jwt_key = 'your-very-secret-key'; // 👈 Замени на что-то посложнее в продакшене
 
-
   private function generateAccessToken($user)
   {
     $jwt_key = \Drupal::service('settings')->get('jwt_key');
@@ -141,7 +140,7 @@ class AuthController extends ControllerBase
 
     $response->headers->setCookie(
       \Symfony\Component\HttpFoundation\Cookie::create(
-        'token',          // имя куки
+        'refresh_token',          // имя куки
         '',               // значение
         time() - 3600,    // прошедшее время = сразу истекает
         '/',              // путь

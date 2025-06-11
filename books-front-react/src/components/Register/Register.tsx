@@ -12,6 +12,7 @@ import {
   passwordRules,
   userNameRules,
 } from "../../constants/constants";
+import { AccessTokenContext } from "../../context/AccessTokenContext";
 
 interface FormFileds {
   username: string;
@@ -23,8 +24,7 @@ interface FormFileds {
 export const Register = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext);
-  // const [loginLoader, setLoginLoader] = useState<boolean>(false);
-  // const [verifyUserLoader, setVerifyUserLoader] = useState<boolean>(false);
+  const { setAccessToken } = useContext(AccessTokenContext);
   const [isOnSuccessRequestsPending, setIsOnSuccessRequestsPending] =
     useState<boolean>(false);
   const [registerError, setRegisterError] = useState<string>("");
@@ -74,31 +74,13 @@ export const Register = () => {
       },
 
       async onSuccess() {
-        // try {
-        //   setLoginLoader(true);
-        //   await login({ username: userNameValue, password: passwordValue });
-        //   setLoginLoader(false);
-        //   resetFormValues();
-        // } catch (err) {
-        //   console.error("Login error: ", err);
-        //   setRegisterError(`Login error: ${err}`);
-        //   return;
-        // }
-
-        // try {
-        //   setVerifyUserLoader(true);
-        //   const { data } = await getUser();
-        //   setVerifyUserLoader(false);
-        //   setUser(data);
-        //   navigate("/");
-        // } catch (err) {
-        //   console.error("Get user error", err);
-        //   setRegisterError(`Ошибка при верификации пользователя ${err}`);
-        // }
-
         try {
           setIsOnSuccessRequestsPending(true);
-          await login({ username: userNameValue, password: passwordValue });
+          const loginResponse = await login({
+            username: userNameValue,
+            password: passwordValue,
+          });
+          setAccessToken(loginResponse.access_token);
           const { data } = await getUser();
           if (data) {
             setUser(data);
@@ -142,7 +124,6 @@ export const Register = () => {
   };
 
   const onSubmit = (formData: FormFileds) => {
-    // const { username, email, password } = formData;
     const req = {
       username: formData.username,
       email: formData.email,

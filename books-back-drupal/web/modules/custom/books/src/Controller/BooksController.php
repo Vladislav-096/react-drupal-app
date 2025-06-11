@@ -9,23 +9,27 @@ use Symfony\Component\HttpFoundation\Request;
 
 class BooksController extends ControllerBase
 {
-  private function getUserFromToken(Request $request)
+  private function getUserFromAccessToken(Request $request)
   {
     $jwt_key = \Drupal::service('settings')->get('jwt_key');
-    $token = $request->cookies->get('refresh_token');
-    if (!$token) {
-      throw new \Exception('Missing token');
+    // $token = $request->cookies->get('refresh_token');
+    $authHeader = $request->headers->get('Authorization');
+    // if (!$token) {
+    //   throw new \Exception('Missing token');
+    // }
+    if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+      throw new \Exception('Missing or invalid Authorization header');
     }
-
-    $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($jwt_key, 'HS256'));
-
+    $accessToken = $matches[1];
+    // $decoded = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($jwt_key, 'HS256'));
+    $decoded = \Firebase\JWT\JWT::decode($accessToken, new \Firebase\JWT\Key($jwt_key, 'HS256'));
     return (array) $decoded;
   }
 
   public function getBooks(Request $request)
   {
     try {
-      $userData = $this->getUserFromToken($request);
+      $userData = $this->getUserFromAccessToken($request);
       $uid = $userData['sub'];
 
       $connection = \Drupal::database();

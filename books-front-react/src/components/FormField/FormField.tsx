@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import styles from "./formField.module.scss";
 
 export interface FormField {
-  // isFocused: boolean;
   errorMessage?: string;
   text: string;
   placeholder?: string;
@@ -10,7 +9,6 @@ export interface FormField {
 }
 
 export const FormField = ({
-  // isFocused,
   errorMessage,
   text,
   placeholder,

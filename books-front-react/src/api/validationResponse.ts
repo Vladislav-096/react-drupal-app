@@ -25,8 +25,7 @@ export async function validateApiResponse(
         message = errorBody.error;
       }
     } catch {
-      // Если тело не JSON — fallback
-      message = await response.text();
+      console.log("nothing happens");
     }
 
     if (status === 404) {
@@ -53,19 +52,3 @@ export async function validateResponse(response: Response): Promise<Response> {
 
   return response;
 }
-
-// export async function validateGetResponse(
-//   response: Response
-// ): Promise<Response> {
-//   if (!response.ok) {
-//     const status = response.status;
-//     if (status === 404) {
-//       throw new CustomError(404, "Data is not found. Try again later");
-//     } else if (status >= 500 && status < 600) {
-//       throw new CustomError(500, "Server error");
-//     } else {
-//       throw new CustomError(status, "Unknown error, try again later");
-//     }
-//   }
-//   return response;
-// }

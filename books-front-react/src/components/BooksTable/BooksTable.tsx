@@ -1,17 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../api/queryClient";
 import { useEffect, useState } from "react";
-import { Books, getBooks } from "../../api/books";
+import { Books } from "../../api/books";
 import { CustomError } from "../../api/validationResponse";
 import { useNavigate } from "react-router";
+import { useGetBooksWithRetry } from "../../hooks/useGetBooksWithRetry";
 
 export const BooksTable = () => {
   const navigate = useNavigate();
   const [books, setBooks] = useState<Books>([]);
+  const getBooksWithRetry = useGetBooksWithRetry();
 
   const getBooksQuery = useQuery(
     {
-      queryFn: () => getBooks(),
+      queryFn: getBooksWithRetry,
       queryKey: ["books"],
       // staleTime: 1000 * 60 * 0.16, // кэш живёт 5 минут
       // refetchOnMount: false,

@@ -4,10 +4,12 @@ import { logout } from "../../api/user";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { queryClient } from "../../api/queryClient";
+import { AccessTokenContext } from "../../context/AccessTokenContext";
 
 export const Account = () => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
+  const { setAccessToken } = useContext(AccessTokenContext);
   const [logoutError, setLogoutError] = useState<string>("");
 
   const LogoutMutation = useMutation(
@@ -19,6 +21,7 @@ export const Account = () => {
       },
 
       onSuccess() {
+        setAccessToken(null);
         setUser(null);
         navigate("/auth");
       },
