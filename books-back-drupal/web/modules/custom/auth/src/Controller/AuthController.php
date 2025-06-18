@@ -24,7 +24,7 @@ class AuthController extends ControllerBase
     $payload = [
       'sub' => $user->id(),
       'email' => $user->getEmail(),
-      'exp' => time() + 300, // 5 минут
+      'exp' => time() + 10, // 5 минут
     ];
     return JWT::encode($payload, $jwt_key, 'HS256');
   }

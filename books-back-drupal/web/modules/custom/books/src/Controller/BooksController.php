@@ -32,11 +32,27 @@ class BooksController extends ControllerBase
       $userData = $this->getUserFromAccessToken($request);
       $uid = $userData['sub'];
 
+      // $request->query - Это объект (symfony), представляющий GET-параметры из URL (query string)
+      // Пример запроса: GET /api/get-books?limit=5&offset=10
+      // Вот эта часть: ?limit=5&offset=10 — это и есть query string.
+
+      // ->get('limit', 10) - Пытается получить значение параметра limit из query string.
+      // Если его нет, то возвращает дефолтное значение — 10
+      $limit = (int) $request->query->get('limit', 5); // int - явное приведение в php
+      $offset = (int) $request->query->get('offset', 0);
+
       $connection = \Drupal::database();
+
+      // Сначала считаем общее количество записей
+      $count_query = $connection->select('books', 'b')
+        ->condition('uid', $uid)
+        ->countQuery();
+      $total = (int) $count_query->execute()->fetchField();
+
       $query = $connection->select('books', 'b')
         ->fields('b', ['id', 'uid', 'name', 'author', 'created'])
-        ->condition('uid', $uid); // фильтрация по пользователю
-
+        ->condition('uid', $uid) // фильтрация по пользователю
+        ->range($offset, $limit);
       $results = $query->execute()->fetchAll();
 
       $data = [];
@@ -50,7 +66,13 @@ class BooksController extends ControllerBase
         ];
       }
 
-      return new JsonResponse($data);
+      // return new JsonResponse($data);
+      return new JsonResponse([
+        'items' => $data,
+        'total' => $total,
+        'limit' => $limit,
+        'offset' => $offset,
+      ]);
     } catch (\Exception $e) {
       return new JsonResponse(['error' => 'Unauthorized: ' . $e->getMessage()], 401);
     }

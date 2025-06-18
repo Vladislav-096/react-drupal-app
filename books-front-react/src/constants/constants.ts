@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost/books-back-drupal/web/";
+export const API_URL = "http://localhost/books-back-drupal/web";
 export const localStorageUserKey = "user";
 
 export const userNameRules = {

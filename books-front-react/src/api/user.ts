@@ -35,7 +35,7 @@ interface Login {
 
 export const register = async ({ username, email, password }: Register) => {
   console.log("data reg: ", { username, email, password });
-  return fetch(`${API_URL}api/register`, {
+  return fetch(`${API_URL}/api/register`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -51,7 +51,7 @@ export const register = async ({ username, email, password }: Register) => {
 };
 
 export const login = async ({ username, password }: Login) => {
-  return fetch(`${API_URL}api/login`, {
+  return fetch(`${API_URL}/api/login`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -69,7 +69,7 @@ export const login = async ({ username, password }: Login) => {
 };
 
 export const logout = async () => {
-  return fetch(`${API_URL}api/logout`, {
+  return fetch(`${API_URL}/api/logout`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -84,7 +84,7 @@ export const logout = async () => {
 };
 
 export const refreshAccessToken = async () => {
-  return fetch(`${API_URL}api/refresh-access-token`, {
+  return fetch(`${API_URL}/api/refresh-access-token`, {
     method: "POST",
     credentials: "include",
   })
@@ -98,7 +98,7 @@ export const refreshAccessToken = async () => {
 };
 
 export const getUser = async () => {
-  return fetch(`${API_URL}api/get-user`, {
+  return fetch(`${API_URL}/api/get-user`, {
     method: "GET",
     credentials: "include",
   })

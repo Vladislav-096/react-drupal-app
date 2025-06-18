@@ -1,20 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../api/queryClient";
 import { useEffect, useState } from "react";
-import { Books } from "../../api/books";
+import { Book } from "../../api/books";
 import { CustomError } from "../../api/validationResponse";
 import { useNavigate } from "react-router";
 import { useGetBooksWithRetry } from "../../hooks/useGetBooksWithRetry";
 
+const limit = 5;
 export const BooksTable = () => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState<Books>([]);
-  const getBooksWithRetry = useGetBooksWithRetry();
+  const [offset, setOffset] = useState<number>(0);
+  const [books, setBooks] = useState<Book[]>([]);
+  const getBooksWithRetry = useGetBooksWithRetry({ limit, offset });
 
   const getBooksQuery = useQuery(
     {
-      queryFn: getBooksWithRetry,
-      queryKey: ["books"],
+      queryFn: () => getBooksWithRetry(),
+      queryKey: ["books", offset],
       // staleTime: 1000 * 60 * 0.16, // кэш живёт 5 минут
       // refetchOnMount: false,
       // refetchOnWindowFocus: false,
@@ -23,10 +25,22 @@ export const BooksTable = () => {
     queryClient
   );
 
+  const handleNext = () => {
+    if (getBooksQuery.data && offset + limit < getBooksQuery.data.total) {
+      setOffset(offset + limit);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (offset - limit >= 0) {
+      setOffset(offset - limit);
+    }
+  };
+
   useEffect(() => {
     const data = getBooksQuery.data;
     if (data) {
-      setBooks(data);
+      setBooks(data.items);
     }
   }, [getBooksQuery.data]);
 
@@ -55,23 +69,41 @@ export const BooksTable = () => {
   }
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>name</th>
-          <th>author</th>
-          <th>created</th>
-        </tr>
-      </thead>
-      <tbody>
-        {books.map((item, index) => (
-          <tr key={index}>
-            <td>{item.name}</td>
-            <td>{item.author ? item.author : "no data"}</td>
-            <td>{item.created}</td>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>name</th>
+            <th>author</th>
+            <th>created</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {books.map((item, index) => (
+            <tr key={index}>
+              <td>{item.name}</td>
+              <td>{item.author ? item.author : "no data"}</td>
+              <td>{item.created}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div>
+        <button onClick={handlePrevious} disabled={offset === 0}>
+          Previous
+        </button>
+        <span>
+          Page {Math.floor(offset / limit) + 1} of{" "}
+          {Math.ceil(getBooksQuery.data.total / limit)}
+        </span>
+        <button
+          onClick={handleNext}
+          disabled={offset + limit >= getBooksQuery.data.total}
+        >
+          Next
+        </button>
+      </div>
+    </div>
   );
 };
